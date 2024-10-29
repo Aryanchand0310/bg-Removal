@@ -11,7 +11,7 @@ import userRouter from './routes/userRoutes.js'
 const PORT = process.env.PORT || 4000
 const app=express()
 
-await connectDBE()
+await connectDBE()  
 
 //Intialize Middleware
 app.use(express.json())

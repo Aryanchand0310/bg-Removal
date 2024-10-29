@@ -7,10 +7,10 @@ const clerkWebhooks=async(req,res)=>{
     
     try{
         //create a svic instance with clerk webhook secret
-        const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
+        const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET )
 
         await whook.verify(JSON.stringify(req.body),{
-            "svix-id":req.headers["svix-timestamp"],
+            "svix-id":req.headers["svix-id"],
             "svix-timestamp":req.headers["svix-timestamp"],
             "svix-signature":req.headers["svix-signature"]
 
@@ -27,8 +27,10 @@ const clerkWebhooks=async(req,res)=>{
                     photo:data.image_url
 
                 }
-                await userModel.create(userData)
+
+                const dt=await userModel.create(userData)
                 res.json({})
+                console.log("dtata saved",dt)
                 break;
             }
 
@@ -71,4 +73,19 @@ const clerkWebhooks=async(req,res)=>{
 }
 
 
-export {clerkWebhooks}
+const userCredits=async(req,res)=>{
+    try{
+
+        const {clerkId}=req.body
+        const userData=await userModel.findOne({clerkId})
+        res.json({success:true,credits:userData.creditBalance})
+
+
+    }catch(error){
+        console.log(error.message)
+        res.json({success:false,message:error.message})
+
+    }
+}
+
+export {clerkWebhooks,userCredits}
